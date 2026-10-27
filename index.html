@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI energy vs driving</title>
+<title>AI energy in everyday terms</title>
 <meta name="description" content="An attempt to quantify the energy used by AI, from a chat query to a full day of Claude Code, by comparing it with driving a car.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Newsreader:wght@400&display=swap">
@@ -68,55 +68,78 @@ padding-block:2rem 3rem;padding-left:max(16px,env(safe-area-inset-left,0px));pad
 .eg-details { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-xl); }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.eg-toolbar { display: flex; align-items: center; gap: var(--cds-gap-sm); margin-bottom: var(--cds-gap-md); flex-wrap: wrap; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.eg-select { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-md); }
+.eg-select:focus-visible { outline: 2px solid var(--cds-chart-axis); outline-offset: 2px; }
 </style>
 
 <div class="eg">
   <header>
-    <h1 class="eg-title">AI energy next to driving</h1>
+    <h1 class="eg-title">AI energy in everyday terms</h1>
   </header>
 
   <section class="eg-sec" id="eg-about">
-    <p class="eg-note" style="font-size:var(--cds-font-size-body);color:var(--color-fg)">This is an attempt to put a number on the energy used by AI, from a single chat query to a full day of Claude Code, by comparing it with a common energy expense: driving a car. Anthropic has not published energy figures for Claude, so the Claude Code numbers are outside estimates. Method, caveats and sources are at the bottom.</p>
+    <p class="eg-note" style="font-size:var(--cds-font-size-body);color:var(--color-fg)">This is an attempt to put a number on the energy used by AI, from a single chat query to a full day of Claude Code, by comparing it with common energy uses: running household appliances and driving a car. Anthropic has not published energy figures for Claude, so the Claude Code numbers are outside estimates. Method, caveats and sources are at the bottom.</p>
   </section>
 
   <section class="eg-sec" id="eg-summary" aria-labelledby="eg-h-summary">
-    <h2 id="eg-h-summary">Energy per task, and how far the same energy goes</h2>
-    <p class="eg-note">Each range runs from the lowest to the highest published estimate. Distances use the energy one mile takes in each mode.</p>
+    <h2 id="eg-h-summary">Energy per task, and what the same energy equals</h2>
+    <p class="eg-note">Each range runs from the lowest to the highest published estimate. Household figures are rounded typical values.</p>
     <div class="eg-grid">
       <article class="eg-card eg-tile">
         <h3 data-source="energy" data-where="id=chat" data-field="task">—</h3>
         <p class="eg-energy" data-source="energy" data-where="id=chat" data-field="range_txt">—</p>
-        <p class="eg-sub">Same energy takes you</p>
+        <p class="eg-sub">Same energy as</p>
         <dl class="eg-dist">
-          <div><dt data-source="travel" data-where="id=gas" data-field="label">—</dt><dd data-source="distances" data-where="task_id=chat&amp;mode_id=gas" data-field="range_txt">—</dd></div>
-          <div><dt data-source="travel" data-where="id=ev" data-field="label">—</dt><dd data-source="distances" data-where="task_id=chat&amp;mode_id=ev" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=microwave" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=chat&amp;item_id=microwave" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=kettle" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=chat&amp;item_id=kettle" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=laptop" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=chat&amp;item_id=laptop" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=dishwasher" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=chat&amp;item_id=dishwasher" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=fridge" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=chat&amp;item_id=fridge" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=air" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=chat&amp;item_id=air" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=shower" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=chat&amp;item_id=shower" data-field="range_txt">—</dd></div>
         </dl>
       </article>
       <article class="eg-card eg-tile">
         <h3 data-source="energy" data-where="id=reasoning" data-field="task">—</h3>
         <p class="eg-energy" data-source="energy" data-where="id=reasoning" data-field="range_txt">—</p>
-        <p class="eg-sub">Same energy takes you</p>
+        <p class="eg-sub">Same energy as</p>
         <dl class="eg-dist">
-          <div><dt data-source="travel" data-where="id=gas" data-field="label">—</dt><dd data-source="distances" data-where="task_id=reasoning&amp;mode_id=gas" data-field="range_txt">—</dd></div>
-          <div><dt data-source="travel" data-where="id=ev" data-field="label">—</dt><dd data-source="distances" data-where="task_id=reasoning&amp;mode_id=ev" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=microwave" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=reasoning&amp;item_id=microwave" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=kettle" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=reasoning&amp;item_id=kettle" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=laptop" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=reasoning&amp;item_id=laptop" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=dishwasher" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=reasoning&amp;item_id=dishwasher" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=fridge" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=reasoning&amp;item_id=fridge" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=air" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=reasoning&amp;item_id=air" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=shower" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=reasoning&amp;item_id=shower" data-field="range_txt">—</dd></div>
         </dl>
       </article>
       <article class="eg-card eg-tile">
         <h3 data-source="energy" data-where="id=session" data-field="task">—</h3>
         <p class="eg-energy" data-source="energy" data-where="id=session" data-field="range_txt">—</p>
-        <p class="eg-sub">Same energy takes you</p>
+        <p class="eg-sub">Same energy as</p>
         <dl class="eg-dist">
-          <div><dt data-source="travel" data-where="id=gas" data-field="label">—</dt><dd data-source="distances" data-where="task_id=session&amp;mode_id=gas" data-field="range_txt">—</dd></div>
-          <div><dt data-source="travel" data-where="id=ev" data-field="label">—</dt><dd data-source="distances" data-where="task_id=session&amp;mode_id=ev" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=microwave" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=session&amp;item_id=microwave" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=kettle" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=session&amp;item_id=kettle" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=laptop" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=session&amp;item_id=laptop" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=dishwasher" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=session&amp;item_id=dishwasher" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=fridge" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=session&amp;item_id=fridge" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=air" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=session&amp;item_id=air" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=shower" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=session&amp;item_id=shower" data-field="range_txt">—</dd></div>
         </dl>
       </article>
       <article class="eg-card eg-tile">
         <h3 data-source="energy" data-where="id=day" data-field="task">—</h3>
         <p class="eg-energy" data-source="energy" data-where="id=day" data-field="range_txt">—</p>
-        <p class="eg-sub">Same energy takes you</p>
+        <p class="eg-sub">Same energy as</p>
         <dl class="eg-dist">
-          <div><dt data-source="travel" data-where="id=gas" data-field="label">—</dt><dd data-source="distances" data-where="task_id=day&amp;mode_id=gas" data-field="range_txt">—</dd></div>
-          <div><dt data-source="travel" data-where="id=ev" data-field="label">—</dt><dd data-source="distances" data-where="task_id=day&amp;mode_id=ev" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=microwave" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=day&amp;item_id=microwave" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=kettle" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=day&amp;item_id=kettle" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=laptop" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=day&amp;item_id=laptop" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=dishwasher" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=day&amp;item_id=dishwasher" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=fridge" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=day&amp;item_id=fridge" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=air" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=day&amp;item_id=air" data-field="range_txt">—</dd></div>
+          <div><dt data-source="household" data-where="id=shower" data-field="label">—</dt><dd data-source="equivalents" data-where="task_id=day&amp;item_id=shower" data-field="range_txt">—</dd></div>
         </dl>
       </article>
     </div>
@@ -146,9 +169,12 @@ padding-block:2rem 3rem;padding-left:max(16px,env(safe-area-inset-left,0px));pad
   </section>
 
   <section class="eg-sec" id="eg-dist-chart" aria-labelledby="eg-h-dist">
-    <h2 id="eg-h-dist">Distance the same energy covers</h2>
-    <p class="eg-note">Bars span the low and high estimate for each task and mode. The scale is linear and capped at 10 miles, so the smallest bars are barely visible; their labels give the distances. The faint part of a bar runs from zero to the low estimate.</p>
-    <div class="eg-card"><div class="eg-chart dash-skeleton" id="eg-chart-dist" data-source="distances energy travel"></div></div>
+    <h2 id="eg-h-dist">What the same energy covers</h2>
+    <p class="eg-note">Bars span the low and high estimate for each task. The scale is linear and changes with what you compare against. The smallest bars are barely visible, so their labels give the amounts.</p>
+    <div class="eg-card">
+      <div class="eg-toolbar"><label for="eg-mode">Compare with</label><select id="eg-mode" class="eg-select" data-source="household"></select></div>
+      <div class="eg-chart dash-skeleton" id="eg-chart-dist" data-source="distances equivalents energy travel household"></div>
+    </div>
   </section>
 
   <section class="eg-sec eg-details" id="eg-details" aria-labelledby="eg-h-details">
@@ -157,6 +183,11 @@ padding-block:2rem 3rem;padding-left:max(16px,env(safe-area-inset-left,0px));pad
     <h3 class="eg-note" style="font-weight:500;color:var(--color-fg)">Estimates behind each range</h3>
     <div class="eg-tablewrap"><table data-source="energy" data-row-key="id">
       <thead><tr><th data-field="task">Task</th><th data-field="range_txt">Range</th><th data-field="low_basis">Low end</th><th data-field="high_basis">High end</th></tr></thead><tbody></tbody>
+    </table></div>
+
+    <h3 class="eg-note" style="font-weight:500;color:var(--color-fg)">Household uses</h3>
+    <div class="eg-tablewrap"><table data-source="household" data-row-key="id">
+      <thead><tr><th data-field="label">Use</th><th data-field="rate_txt">Typical energy</th><th data-field="basis">Basis</th></tr></thead><tbody></tbody>
     </table></div>
 
     <h3 class="eg-note" style="font-weight:500;color:var(--color-fg)">Energy per mile</h3>
@@ -184,8 +215,7 @@ padding-block:2rem 3rem;padding-left:max(16px,env(safe-area-inset-left,0px));pad
 
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
-<script>
-const __DATA={"energy": [{"id": "chat", "task": "One chat query", "detail": "Text prompt in a chatbot", "low_wh": 0.24, "high_wh": 0.34, "range_txt": "0.24–0.34 Wh", "low_basis": "Google's measured median Gemini text prompt", "high_basis": "OpenAI's stated average ChatGPT query"}, {"id": "reasoning", "task": "One long reasoning answer", "detail": "Extended thinking or very long output", "low_wh": 4, "high_wh": 40, "range_txt": "4–40 Wh", "low_basis": "Independent estimates for reasoning modes, low end", "high_basis": "Independent estimates for reasoning modes, high end"}, {"id": "session", "task": "One Claude Code session", "detail": "Median session of agentic coding", "low_wh": 41, "high_wh": 600, "range_txt": "41–600 Wh", "low_basis": "Couch: median session, about 590k tokens and 24 model calls", "high_basis": "Hausfather: median session of a heavy user with many subagents"}, {"id": "day", "task": "A full day in Claude Code", "detail": "A working day of agentic coding", "low_wh": 1300, "high_wh": 3000, "range_txt": "1.3–3.0 kWh", "low_basis": "Couch: median day", "high_basis": "Hausfather: average day (his range across days is 1.2 to 5.9 kWh)"}], "travel": [{"id": "gas", "label": "Gas car", "kwh_per_mile": 1.123, "rate_txt": "1.12 kWh per mile", "basis": "30 mpg, with 33.7 kWh of energy in a gallon of gasoline (EPA)"}, {"id": "ev", "label": "Electric car", "kwh_per_mile": 0.303, "rate_txt": "0.30 kWh per mile", "basis": "A mainstream EV at 3.3 miles per kWh; ratings run from 1.5 to 4.2 miles per kWh"}], "trips": [{"id": "drive_gas", "label": "5-hour drive, gas car", "short": "5-hour drive (300 mi)", "miles": 300, "mode": "gas"}, {"id": "drive_ev", "label": "5-hour drive, electric car", "short": "5-hour drive (300 mi)", "miles": 300, "mode": "ev"}], "notes": [{"topic": "What is measured", "text": "Chat and Claude Code figures are data-center electricity. Car figures are fuel or battery energy. The two are not directly comparable in carbon or primary-energy terms."}, {"topic": "Claude Code is estimated", "text": "Anthropic has not published per-token or per-prompt energy data for Claude. Both session estimates are built from token counts in real session logs and assumed energy per token. They differ because Hausfather's sessions are larger and use many subagents, and he describes himself as a heavy user."}, {"topic": "Chat figures", "text": "Google's 0.24 Wh is a median for text prompts and excludes training. OpenAI's 0.34 Wh is a stated average. A 2026 Microsoft Research analysis in Joule argues widely cited per-query figures are overstated 4 to 20 times for production deployments."}, {"topic": "Reasoning range", "text": "The 4 to 40 Wh range comes from independent estimates for reasoning or extended-thinking modes. It varies with model and answer length."}, {"topic": "Full-day range", "text": "Couch's median day is 1.3 kWh. Hausfather's average day is 3.0 kWh, with days ranging from 1.2 to 5.9 kWh. The page uses 1.3 to 3.0 kWh and leaves out the extreme days."}, {"topic": "Why agents cost more", "text": "An agent makes hundreds of model calls per session and re-reads a growing context each time. One profiling study found a sequential agent workload used 63 times more system energy per output token than saturated serving."}, {"topic": "How distances are worked out", "text": "Distance is task energy divided by the energy one mile takes in that mode. The low end uses the low energy estimate and the high end uses the high one. A 5-hour drive is taken as 300 miles at about 60 mph."}, {"topic": "Days of Claude Code", "text": "Days are trip energy divided by a full Claude Code day: the fewest days use 3.0 kWh per day and the most use 1.3 kWh per day."}], "sources": [{"id": "couch", "title": "Simon Couch, Electricity use of AI coding agents", "url": "https://simonpcouch.com/blog/2026-01-20-cc-impact/", "used_for": "Claude Code session and day, low estimate"}, {"id": "hausfather", "title": "Zeke Hausfather, The real energy use of agentic AI", "url": "https://www.theclimatebrink.com/p/the-real-energy-use-of-agentic-ai", "used_for": "Claude Code session and day, high estimate"}, {"id": "decoder", "title": "The Decoder, AI agents use roughly 600 times more energy than a simple chat prompt", "url": "https://the-decoder.com/ai-agents-use-roughly-600-times-more-energy-than-a-simple-chat-prompt/", "used_for": "Summary of Hausfather's measurements"}, {"id": "heise", "title": "heise, Why agents like Claude Code are real power guzzlers", "url": "https://www.heise.de/en/news/AI-as-a-climate-factor-Why-agents-like-Claude-Code-are-real-power-guzzlers-11455405.html", "used_for": "Typical session range of 0.2 to 1.2 kWh"}, {"id": "dcd", "title": "Data Center Dynamics, Google median Gemini prompt", "url": "https://www.datacenterdynamics.com/en/news/google-median-gemini-prompt-uses-024-watt-hours-of-power-and-consumes-026ml-of-water/", "used_for": "Chat query, low estimate (0.24 Wh)"}, {"id": "celsius", "title": "Projet Celsius, energy of a chat query", "url": "https://projetcelsius.com/en/blog/chatgpt-query-energy-consumption/", "used_for": "Chat query, high estimate (0.34 Wh from OpenAI)"}, {"id": "brainpool", "title": "Brainpool, LLM inference energy and footprint", "url": "https://brainpool.ai/blog/the-energy-and-greenhouse-gas-footprint-of-llm-inference-data-centers-frontier-models-scaling-and-the-road-to-2030", "used_for": "Reasoning-mode range"}, {"id": "msr", "title": "Microsoft Research, Energy Use of AI Inference", "url": "https://microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-compute", "used_for": "Caveat on overstated per-query figures"}, {"id": "blackwell", "title": "Where Does the Energy Go? Profiling LLM Agent Inference on Blackwell GPUs", "url": "https://neurips.cc/virtual/2026/170717", "used_for": "Agent workloads use far more energy per token"}, {"id": "usafacts", "title": "USAFacts, electricity to power all cars", "url": "https://usafacts.org/articles/how-much-electricity-would-it-take-to-power-all-cars-if-they-were-electric", "used_for": "33.7 kWh per gallon of gasoline (EPA)"}, {"id": "recharged", "title": "Recharged, car energy explained", "url": "https://recharged.com/articles/car-energy-explained-gas-vs-electric", "used_for": "Typical EV efficiency"}]};
+<script>const __DATA={"energy": [{"id": "chat", "task": "One chat query", "detail": "Text prompt in a chatbot", "low_wh": 0.24, "high_wh": 0.34, "range_txt": "0.24–0.34 Wh", "low_basis": "Google's measured median Gemini text prompt", "high_basis": "OpenAI's stated average ChatGPT query"}, {"id": "reasoning", "task": "One long reasoning answer", "detail": "Extended thinking or very long output", "low_wh": 4, "high_wh": 40, "range_txt": "4–40 Wh", "low_basis": "Independent estimates for reasoning modes, low end", "high_basis": "Independent estimates for reasoning modes, high end"}, {"id": "session", "task": "One Claude Code session", "detail": "Median session of agentic coding", "low_wh": 41, "high_wh": 600, "range_txt": "41–600 Wh", "low_basis": "Couch: median session, about 590k tokens and 24 model calls", "high_basis": "Hausfather: median session of a heavy user with many subagents"}, {"id": "day", "task": "A full day in Claude Code", "detail": "A working day of agentic coding", "low_wh": 1300, "high_wh": 3000, "range_txt": "1.3–3.0 kWh", "low_basis": "Couch: median day", "high_basis": "Hausfather: average day (his range across days is 1.2 to 5.9 kWh)"}], "travel": [{"id": "gas", "label": "Gas car", "kwh_per_mile": 1.123, "rate_txt": "1.12 kWh per mile", "basis": "30 mpg, with 33.7 kWh of energy in a gallon of gasoline (EPA)"}, {"id": "ev", "label": "Electric car", "kwh_per_mile": 0.303, "rate_txt": "0.30 kWh per mile", "basis": "A mainstream EV at 3.3 miles per kWh; ratings run from 1.5 to 4.2 miles per kWh"}], "trips": [{"id": "drive_gas", "label": "5-hour drive, gas car", "short": "5-hour drive (300 mi)", "miles": 300, "mode": "gas"}, {"id": "drive_ev", "label": "5-hour drive, electric car", "short": "5-hour drive (300 mi)", "miles": 300, "mode": "ev"}], "notes": [{"topic": "What is measured", "text": "Chat and Claude Code figures are data-center electricity. Car figures are fuel or battery energy. The two are not directly comparable in carbon or primary-energy terms."}, {"topic": "Household figures", "text": "Household values are rounded typical figures, not measurements from one source. Appliance models, settings and water temperature change them a lot, so check your own appliance's label or a plug-in meter."}, {"topic": "Claude Code is estimated", "text": "Anthropic has not published per-token or per-prompt energy data for Claude. Both session estimates are built from token counts in real session logs and assumed energy per token. They differ because Hausfather's sessions are larger and use many subagents, and he describes himself as a heavy user."}, {"topic": "Chat figures", "text": "Google's 0.24 Wh is a median for text prompts and excludes training. OpenAI's 0.34 Wh is a stated average. A 2026 Microsoft Research analysis in Joule argues widely cited per-query figures are overstated 4 to 20 times for production deployments."}, {"topic": "Reasoning range", "text": "The 4 to 40 Wh range comes from independent estimates for reasoning or extended-thinking modes. It varies with model and answer length."}, {"topic": "Full-day range", "text": "Couch's median day is 1.3 kWh. Hausfather's average day is 3.0 kWh, with days ranging from 1.2 to 5.9 kWh. The page uses 1.3 to 3.0 kWh and leaves out the extreme days."}, {"topic": "Why agents cost more", "text": "An agent makes hundreds of model calls per session and re-reads a growing context each time. One profiling study found a sequential agent workload used 63 times more system energy per output token than saturated serving."}, {"topic": "How distances are worked out", "text": "Distance is task energy divided by the energy one mile takes in that mode. Household equivalents divide task energy by the appliance's energy per unit of use. The low end uses the low energy estimate and the high end uses the high one. A 5-hour drive is taken as 300 miles at about 60 mph."}, {"topic": "Days of Claude Code", "text": "Days are trip energy divided by a full Claude Code day: the fewest days use 3.0 kWh per day and the most use 1.3 kWh per day."}], "sources": [{"id": "couch", "title": "Simon Couch, Electricity use of AI coding agents", "url": "https://simonpcouch.com/blog/2026-01-20-cc-impact/", "used_for": "Claude Code session and day, low estimate"}, {"id": "hausfather", "title": "Zeke Hausfather, The real energy use of agentic AI", "url": "https://www.theclimatebrink.com/p/the-real-energy-use-of-agentic-ai", "used_for": "Claude Code session and day, high estimate"}, {"id": "decoder", "title": "The Decoder, AI agents use roughly 600 times more energy than a simple chat prompt", "url": "https://the-decoder.com/ai-agents-use-roughly-600-times-more-energy-than-a-simple-chat-prompt/", "used_for": "Summary of Hausfather's measurements"}, {"id": "heise", "title": "heise, Why agents like Claude Code are real power guzzlers", "url": "https://www.heise.de/en/news/AI-as-a-climate-factor-Why-agents-like-Claude-Code-are-real-power-guzzlers-11455405.html", "used_for": "Typical session range of 0.2 to 1.2 kWh"}, {"id": "dcd", "title": "Data Center Dynamics, Google median Gemini prompt", "url": "https://www.datacenterdynamics.com/en/news/google-median-gemini-prompt-uses-024-watt-hours-of-power-and-consumes-026ml-of-water/", "used_for": "Chat query, low estimate (0.24 Wh)"}, {"id": "celsius", "title": "Projet Celsius, energy of a chat query", "url": "https://projetcelsius.com/en/blog/chatgpt-query-energy-consumption/", "used_for": "Chat query, high estimate (0.34 Wh from OpenAI)"}, {"id": "brainpool", "title": "Brainpool, LLM inference energy and footprint", "url": "https://brainpool.ai/blog/the-energy-and-greenhouse-gas-footprint-of-llm-inference-data-centers-frontier-models-scaling-and-the-road-to-2030", "used_for": "Reasoning-mode range"}, {"id": "msr", "title": "Microsoft Research, Energy Use of AI Inference", "url": "https://microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-compute", "used_for": "Caveat on overstated per-query figures"}, {"id": "blackwell", "title": "Where Does the Energy Go? Profiling LLM Agent Inference on Blackwell GPUs", "url": "https://neurips.cc/virtual/2026/170717", "used_for": "Agent workloads use far more energy per token"}, {"id": "usafacts", "title": "USAFacts, electricity to power all cars", "url": "https://usafacts.org/articles/how-much-electricity-would-it-take-to-power-all-cars-if-they-were-electric", "used_for": "33.7 kWh per gallon of gasoline (EPA)"}, {"id": "recharged", "title": "Recharged, car energy explained", "url": "https://recharged.com/articles/car-energy-explained-gas-vs-electric", "used_for": "Typical EV efficiency"}], "household": [{"id": "microwave", "label": "Microwave", "kind": "power", "wh_per_unit": 1100, "rate_txt": "1,100 W", "basis": "A typical microwave on full power.", "axis_unit": "h", "axis_wh": 1100, "axis_cap": 3, "axis_step": 0.5, "unit_one": "", "unit_many": ""}, {"id": "kettle", "label": "Electric kettle", "kind": "volume", "wh_per_unit": 100, "rate_txt": "100 Wh per liter", "basis": "Boiling 1 liter of tap water, about 0.1 kWh.", "axis_unit": "L boiled", "axis_wh": 100, "axis_cap": 30, "axis_step": 5, "unit_one": "", "unit_many": ""}, {"id": "laptop", "label": "Laptop", "kind": "power", "wh_per_unit": 50, "rate_txt": "50 W", "basis": "A typical laptop in use.", "axis_unit": "h", "axis_wh": 50, "axis_cap": 60, "axis_step": 10, "unit_one": "", "unit_many": ""}, {"id": "dishwasher", "label": "Dishwasher", "kind": "count", "wh_per_unit": 1200, "rate_txt": "1.2 kWh per cycle", "basis": "A typical cycle with heated drying; efficient models use less.", "axis_unit": "cycles", "axis_wh": 1200, "axis_cap": 3, "axis_step": 0.5, "unit_one": "a cycle", "unit_many": "cycles"}, {"id": "fridge", "label": "Refrigerator", "kind": "power", "wh_per_unit": 46, "rate_txt": "46 W average (1.1 kWh a day)", "basis": "A typical modern refrigerator. Real draw cycles on and off.", "axis_unit": "days", "axis_wh": 1100, "axis_cap": 3, "axis_step": 0.5, "unit_one": "", "unit_many": ""}, {"id": "air", "label": "Central air", "kind": "power", "wh_per_unit": 3000, "rate_txt": "3,000 W", "basis": "A central air conditioner running continuously.", "axis_unit": "h", "axis_wh": 3000, "axis_cap": 1, "axis_step": 0.25, "unit_one": "", "unit_many": ""}, {"id": "shower", "label": "10-minute shower", "kind": "count", "wh_per_unit": 3500, "rate_txt": "3.5 kWh per shower", "basis": "Electric water heating, about 2.5 gallons a minute for 10 minutes; roughly 3 to 4 kWh.", "axis_unit": "showers", "axis_wh": 3500, "axis_cap": 1, "axis_step": 0.25, "unit_one": "a shower", "unit_many": "showers"}]};
 const __calcs={};
 window.dash={
   colors:['var(--c1)','var(--c2)'],
@@ -249,7 +279,37 @@ dash.calc('trip_days', {
   }
 });
 
-const NEEDED = ['energy', 'travel', 'trips', 'notes', 'sources', 'distances', 'trip_days'];
+dash.calc('equivalents', {
+  title: 'Household equivalents',
+  description: 'Each task\u2019s energy divided by the energy of one unit of each household use.',
+  inputs: ['energy', 'household'],
+  fn: (energy, household) => {
+    const sig = (x) => Number(x.toPrecision(2));
+    const num = (x) => sig(x).toLocaleString('en-US');
+    const time = (h) => { const s = h * 3600; if (s < 10) return [s.toFixed(1), 's']; if (s < 60) return [num(s), 's']; if (s < 3600) return [num(s / 60), 'min']; if (h < 72) return [num(h), 'h']; return [num(h / 24), 'days']; };
+    const vol = (l) => { const ml = l * 1000; if (ml < 10) return [ml.toFixed(1), 'mL']; if (ml < 1000) return [num(ml), 'mL']; return [num(l), 'L']; };
+    const join = (a, b) => a[1] === b[1] ? a[0] + ' \u2013 ' + b[0] + ' ' + a[1] : a[0] + ' ' + a[1] + ' \u2013 ' + b[0] + ' ' + b[1];
+    const cnt = (v) => v < 1 ? [(v * 100 < 1 ? (v * 100).toPrecision(1) : num(v * 100)), '%'] : [num(v), ''];
+    const out = [];
+    for (const e of energy) {
+      for (const it of household) {
+        const lo = e.low_wh / it.wh_per_unit, hi = e.high_wh / it.wh_per_unit;
+        let txt;
+        if (it.kind === 'power') txt = join(time(lo), time(hi));
+        else if (it.kind === 'volume') txt = join(vol(lo), vol(hi));
+        else {
+          const a = cnt(lo), b = cnt(hi);
+          txt = hi < 1 ? a[0] + ' \u2013 ' + b[0] + '% of ' + it.unit_one : a[0] + a[1] + ' \u2013 ' + b[0] + ' ' + it.unit_many;
+        }
+        out.push({ task_id: e.id, task: e.task, item_id: it.id, item: it.label, range_txt: txt });
+      }
+    }
+    return out;
+  }
+});
+
+const NEEDED = ['energy', 'travel', 'trips', 'notes', 'sources', 'household', 'distances', 'equivalents', 'trip_days'];
+let MODE = 'car';
 
 function fillMarks() {
   document.querySelectorAll('.eg [data-where][data-field]').forEach((el) => {
@@ -351,32 +411,49 @@ function drawEnergy(el) {
   });
 }
 
-function drawDist(el) {
+function drawCover(el) {
   const dist = dash.data('distances').data;
+  const equiv = dash.data('equivalents').data;
   const energy = dash.data('energy').data;
   const travel = dash.data('travel').data;
+  const household = dash.data('household').data;
   el.textContent = '';
   el.classList.remove('dash-skeleton', 'eg-failed');
+  let series, axis;
+  if (MODE === 'car') {
+    series = travel.map((t) => ({ name: t.label, rows: energy.map((e) => {
+      const r = dist.find((d) => d.task_id === e.id && d.mode_id === t.id);
+      return { low: r.low_mi, high: r.high_mi, txt: r.range_txt };
+    }) }));
+    axis = { cap: 10, step: 2, unit: 'mi' };
+  } else {
+    const it = household.find((x) => x.id === MODE) || household[0];
+    series = [{ name: it.label, rows: energy.map((e) => {
+      const r = equiv.find((d) => d.task_id === e.id && d.item_id === it.id);
+      return { low: e.low_wh / it.axis_wh, high: e.high_wh / it.axis_wh, txt: r.range_txt };
+    }) }];
+    axis = { cap: it.axis_cap, step: it.axis_step, unit: it.axis_unit };
+  }
   const leg = document.createElement('div');
   leg.className = 'eg-legend';
-  travel.forEach((t, i) => {
+  series.forEach((sr, i) => {
     const s = document.createElement('span'); s.className = 'eg-key';
     const sw = document.createElement('i'); sw.style.background = dash.colors[i % dash.colors.length];
-    s.append(sw, document.createTextNode(t.label));
+    s.append(sw, document.createTextNode(sr.name));
     leg.appendChild(s);
   });
   el.appendChild(leg);
   const W = Math.max(280, el.clientWidth);
-  const CAP = 10;
+  const CAP = axis.cap;
   const barH = 11, barGap = 6, titleH = 20;
-  const groupH = titleH + travel.length * (barH + barGap) + 14;
+  const groupH = titleH + series.length * (barH + barGap) + 14;
   const m = { t: 8, r: 14, b: 34, l: 6 };
   const H = m.t + energy.length * groupH + m.b;
   const x = d3.scaleLinear().domain([0, CAP]).range([m.l, W - m.r]);
-  const ticks = [0, 2, 4, 6, 8, 10];
+  const ticks = d3.range(0, CAP + axis.step / 2, axis.step).map((v) => Number(v.toFixed(4)));
   const yAxis = H - m.b;
   const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', '0 0 ' + W + ' ' + H)
-    .attr('role', 'img').attr('aria-label', 'Distance covered by the energy of each task, by mode, on a linear scale capped at 10 miles');
+    .attr('role', 'img').attr('aria-label', 'Amount of ' + series.map((sr) => sr.name).join(' and ') + ' the energy of each task covers, on a linear scale in ' + axis.unit);
   svg.append('g').selectAll('line').data(ticks).join('line')
     .attr('x1', (d) => x(d)).attr('x2', (d) => x(d)).attr('y1', m.t).attr('y2', yAxis)
     .style('stroke', 'var(--cds-chart-grid)').attr('stroke-width', 1);
@@ -385,29 +462,40 @@ function drawDist(el) {
   svg.append('g').selectAll('text').data(ticks).join('text').attr('class', 'eg-muted')
     .attr('x', (d) => x(d)).attr('y', yAxis + 18)
     .attr('text-anchor', (d, i) => i === 0 ? 'start' : (i === ticks.length - 1 ? 'end' : 'middle'))
-    .text((d) => d + ' mi');
+    .text((d, i) => i === ticks.length - 1 ? d + ' ' + axis.unit : String(d));
   const tip = makeTip(el);
   energy.forEach((e, gi) => {
     const gy = m.t + gi * groupH;
     svg.append('text').attr('class', 'eg-strong eg-halo').attr('x', m.l).attr('y', gy + 13).text(e.task);
-    travel.forEach((t, ti) => {
-      const row = dist.find((d) => d.task_id === e.id && d.mode_id === t.id);
-      if (!row) return;
-      const by = gy + titleH + ti * (barH + barGap);
-      const color = dash.colors[ti % dash.colors.length];
-      const xLo = x(Math.min(row.low_mi, CAP)), xHi = x(Math.min(row.high_mi, CAP));
-      svg.append('rect').attr('x', x(0)).attr('y', by).attr('width', Math.max(0, xLo - x(0))).attr('height', barH)
-        .attr('style', 'fill:' + color + ';opacity:.3');
+    series.forEach((sr, si) => {
+      const row = sr.rows[gi];
+      const by = gy + titleH + si * (barH + barGap);
+      const color = dash.colors[si % dash.colors.length];
+      const xLo = x(Math.min(row.low, CAP)), xHi = x(Math.min(row.high, CAP));
       const w = Math.max(3, xHi - xLo);
       svg.append('rect').attr('x', xLo).attr('y', by).attr('width', w).attr('height', barH).attr('rx', 2)
         .attr('style', 'fill:' + color);
-      const lab = svg.append('text').attr('class', 'eg-muted eg-halo').attr('y', by + 9).text(row.range_txt);
-      if (W - m.r - (xLo + w + 6) > 110) lab.attr('x', xLo + w + 6);
+      const lab = svg.append('text').attr('class', 'eg-muted eg-halo').attr('y', by + 9).text(row.txt);
+      if (W - m.r - (xLo + w + 6) > 150) lab.attr('x', xLo + w + 6);
       else lab.attr('x', xLo - 6).attr('text-anchor', 'end');
       svg.append('rect').attr('x', 0).attr('y', by - barGap / 2).attr('width', W).attr('height', barH + barGap).style('fill', 'transparent')
-        .on('pointermove', (ev) => tip.show(ev, e.task + ' \u00b7 ' + t.label, row.range_txt))
+        .on('pointermove', (ev) => tip.show(ev, e.task + ' \u00b7 ' + sr.name, row.txt))
         .on('pointerleave', () => tip.hide());
     });
+  });
+}
+
+function setupSelect() {
+  const sel = document.getElementById('eg-mode');
+  if (!sel || sel.options.length) return;
+  const add = (v, t) => { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.appendChild(o); };
+  add('car', 'Driving a car');
+  dash.data('household').data.forEach((x) => add(x.id, x.label));
+  sel.value = MODE;
+  sel.addEventListener('change', () => {
+    MODE = sel.value;
+    const el = document.getElementById('eg-chart-dist');
+    if (NEEDED.every((id) => dash.data(id).status === 'ok')) drawCover(el);
   });
 }
 
@@ -419,8 +507,9 @@ dash.onData(() => {
   if (!e1 || !e2) return;
   const states = NEEDED.map((id) => dash.data(id).status);
   if (states.every((s) => s === 'ok')) {
+    setupSelect();
     drawEnergy(e1);
-    drawDist(e2);
+    drawCover(e2);
     return;
   }
   const failed = states.some((s) => ['error', 'connect', 'declined', 'missing'].includes(s));

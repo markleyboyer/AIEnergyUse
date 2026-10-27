@@ -1,6 +1,6 @@
-# AI energy use
+# AI energy in everyday terms
 
-An attempt to quantify the energy used by AI, from a single chat query to a full day of Claude Code, by comparing it with driving a car.
+An attempt to quantify the energy used by AI, from a single chat query to a full day of Claude Code, by comparing it with household appliances and driving a car.
 
 Live page: https://markleyboyer.github.io/AIEnergyUse/
 
