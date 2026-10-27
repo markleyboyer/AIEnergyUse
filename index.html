@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI energy vs driving</title>
+<meta name="description" content="An attempt to quantify the energy used by AI, from a chat query to a full day of Claude Code, by comparing it with driving a car.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Newsreader:wght@400&display=swap">
+<style>
+:root{--color-bg:#f6f7f5;--color-panel:#ffffff;--color-fg:#1d2421;--color-fg-muted:#5b665f;--color-border-line:#dce1dd;--color-bad:#b3402f;
+--c1:#1f6f5c;--c2:#b8681a;--cds-chart-muted:#b7c0ba;--cds-chart-grid:#e6eae7;--cds-chart-axis:#98a39d;--cds-chart-reference:#7d8882;
+--cds-surface-popover:#ffffff;--cds-border:#dce1dd;--cds-text-secondary:#5b665f;--cds-shadow-popover:0 4px 14px rgb(0 0 0 / .14);
+--cds-gap-xs:.375rem;--cds-gap-sm:.5rem;--cds-gap-md:1rem;--cds-gap-lg:1.5rem;--cds-gap-xl:2.25rem;
+--cds-pad-xs:.25rem;--cds-pad-sm:.5rem;--cds-pad-md:.75rem;--cds-pad-lg:1.25rem;--cds-radius:.5rem;
+--cds-font-size-caption:.8125rem;--cds-font-size-body:.9375rem;--cds-font-size-heading:1.125rem;--cds-font-size-title:clamp(1.6rem,4vw,2.1rem);
+--cds-font-weight-medium:500;--cds-dur-slow:300ms;
+--font-anthropic-sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;--font-anthropic-serif:'Newsreader',Georgia,serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--color-bg:#131715;--color-panel:#1b211e;--color-fg:#e7ece9;--color-fg-muted:#9aa6a0;--color-border-line:#2b332f;--color-bad:#e0705e;--c1:#5cc2a6;--c2:#e5a24f;--cds-chart-muted:#46514b;--cds-chart-grid:#262d29;--cds-chart-axis:#55605a;--cds-chart-reference:#7a857f;--cds-surface-popover:#1b211e;--cds-border:#2b332f;--cds-text-secondary:#9aa6a0;--cds-shadow-popover:0 4px 14px rgb(0 0 0 / .5);color-scheme:dark}}
+body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(--font-anthropic-sans);font-size:var(--cds-font-size-body);
+padding-block:2rem 3rem;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+</style>
+</head>
+<body>
+<div id="dash-root">
+<style>
+.eg { max-width: 64rem; margin-inline: auto; display: flex; flex-direction: column; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+.eg * { box-sizing: border-box; }
+.eg h1, .eg h2, .eg h3, .eg p { margin: 0; }
+.eg-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.15; text-wrap: balance; }
+.eg-lede { max-width: 42rem; margin-top: var(--cds-gap-sm); color: var(--color-fg-muted); font-size: var(--cds-font-size-heading); line-height: 1.45; text-wrap: pretty; }
+.eg-sec { display: flex; flex-direction: column; gap: var(--cds-gap-md); min-width: 0; }
+.eg-sec h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.eg-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.45; max-width: 46rem; }
+.eg-grid { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 14.5rem), 1fr)); }
+.eg-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.eg-tile { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+.eg-tile h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+.eg-energy { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.eg-sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.eg-dist { margin: 0; display: flex; flex-direction: column; gap: var(--cds-gap-xs); border-top: 1px solid var(--color-border-line); padding-top: var(--cds-pad-sm); }
+.eg-dist div { display: flex; justify-content: space-between; gap: var(--cds-gap-sm); align-items: baseline; flex-wrap: wrap; }
+.eg-dist dt { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.eg-dist dd { margin: 0; font-variant-numeric: tabular-nums; font-size: var(--cds-font-size-body); }
+.eg-call { display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
+.eg-call .eg-big { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.eg-chart { position: relative; min-height: 14rem; width: 100%; }
+.eg-chart svg { display: block; overflow: visible; }
+.eg-chart text { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); }
+.eg-muted { fill: var(--color-fg-muted); }
+.eg-strong { fill: var(--color-fg); font-weight: 500; }
+.eg-halo { paint-order: stroke; stroke: var(--color-panel); stroke-width: 4px; stroke-linejoin: round; }
+.eg-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); margin-bottom: var(--cds-gap-sm); }
+.eg-key { display: inline-flex; align-items: center; gap: 0.4rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.eg-key i { width: 0.75rem; height: 0.75rem; border-radius: 3px; display: inline-block; }
+.eg-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); max-width: 16rem; }
+.eg-tip[hidden] { display: none; }
+.eg-tip-a { color: var(--cds-text-secondary); }
+.eg-tip-b { font-variant-numeric: tabular-nums; }
+.eg-failed { display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.eg-failed::before { content: ""; width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--color-bad); }
+.eg-tablewrap { overflow-x: auto; }
+.eg table { border-collapse: collapse; width: 100%; min-width: 36rem; font-size: var(--cds-font-size-caption); }
+.eg th, .eg td { text-align: left; vertical-align: top; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); line-height: 1.4; }
+.eg th { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); }
+.eg td { font-variant-numeric: tabular-nums; }
+.eg a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.eg-details { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-xl); }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="eg">
+  <header>
+    <h1 class="eg-title">AI energy next to driving</h1>
+  </header>
+
+  <section class="eg-sec" id="eg-about">
+    <p class="eg-note" style="font-size:var(--cds-font-size-body);color:var(--color-fg)">This is an attempt to put a number on the energy used by AI, from a single chat query to a full day of Claude Code, by comparing it with a common energy expense: driving a car. Anthropic has not published energy figures for Claude, so the Claude Code numbers are outside estimates. Method, caveats and sources are at the bottom.</p>
+  </section>
+
+  <section class="eg-sec" id="eg-summary" aria-labelledby="eg-h-summary">
+    <h2 id="eg-h-summary">Energy per task, and how far the same energy goes</h2>
+    <p class="eg-note">Each range runs from the lowest to the highest published estimate. Distances use the energy one mile takes in each mode.</p>
+    <div class="eg-grid">
+      <article class="eg-card eg-tile">
+        <h3 data-source="energy" data-where="id=chat" data-field="task">—</h3>
+        <p class="eg-energy" data-source="energy" data-where="id=chat" data-field="range_txt">—</p>
+        <p class="eg-sub">Same energy takes you</p>
+        <dl class="eg-dist">
+          <div><dt data-source="travel" data-where="id=gas" data-field="label">—</dt><dd data-source="distances" data-where="task_id=chat&amp;mode_id=gas" data-field="range_txt">—</dd></div>
+          <div><dt data-source="travel" data-where="id=ev" data-field="label">—</dt><dd data-source="distances" data-where="task_id=chat&amp;mode_id=ev" data-field="range_txt">—</dd></div>
+        </dl>
+      </article>
+      <article class="eg-card eg-tile">
+        <h3 data-source="energy" data-where="id=reasoning" data-field="task">—</h3>
+        <p class="eg-energy" data-source="energy" data-where="id=reasoning" data-field="range_txt">—</p>
+        <p class="eg-sub">Same energy takes you</p>
+        <dl class="eg-dist">
+          <div><dt data-source="travel" data-where="id=gas" data-field="label">—</dt><dd data-source="distances" data-where="task_id=reasoning&amp;mode_id=gas" data-field="range_txt">—</dd></div>
+          <div><dt data-source="travel" data-where="id=ev" data-field="label">—</dt><dd data-source="distances" data-where="task_id=reasoning&amp;mode_id=ev" data-field="range_txt">—</dd></div>
+        </dl>
+      </article>
+      <article class="eg-card eg-tile">
+        <h3 data-source="energy" data-where="id=session" data-field="task">—</h3>
+        <p class="eg-energy" data-source="energy" data-where="id=session" data-field="range_txt">—</p>
+        <p class="eg-sub">Same energy takes you</p>
+        <dl class="eg-dist">
+          <div><dt data-source="travel" data-where="id=gas" data-field="label">—</dt><dd data-source="distances" data-where="task_id=session&amp;mode_id=gas" data-field="range_txt">—</dd></div>
+          <div><dt data-source="travel" data-where="id=ev" data-field="label">—</dt><dd data-source="distances" data-where="task_id=session&amp;mode_id=ev" data-field="range_txt">—</dd></div>
+        </dl>
+      </article>
+      <article class="eg-card eg-tile">
+        <h3 data-source="energy" data-where="id=day" data-field="task">—</h3>
+        <p class="eg-energy" data-source="energy" data-where="id=day" data-field="range_txt">—</p>
+        <p class="eg-sub">Same energy takes you</p>
+        <dl class="eg-dist">
+          <div><dt data-source="travel" data-where="id=gas" data-field="label">—</dt><dd data-source="distances" data-where="task_id=day&amp;mode_id=gas" data-field="range_txt">—</dd></div>
+          <div><dt data-source="travel" data-where="id=ev" data-field="label">—</dt><dd data-source="distances" data-where="task_id=day&amp;mode_id=ev" data-field="range_txt">—</dd></div>
+        </dl>
+      </article>
+    </div>
+  </section>
+
+  <section class="eg-sec" id="eg-trips" aria-labelledby="eg-h-trips">
+    <h2 id="eg-h-trips">The other way round: a long drive in days of Claude Code</h2>
+    <p class="eg-note">How many full Claude Code days it takes to use the energy of a long drive.</p>
+    <div class="eg-grid">
+      <article class="eg-card eg-call">
+        <p class="eg-sub" data-source="trip_days" data-where="id=drive_gas" data-field="label">—</p>
+        <p class="eg-big" data-source="trip_days" data-where="id=drive_gas" data-field="days_txt">—</p>
+        <p class="eg-sub" data-source="trip_days" data-where="id=drive_gas" data-field="years_txt">—</p>
+      </article>
+      <article class="eg-card eg-call">
+        <p class="eg-sub" data-source="trip_days" data-where="id=drive_ev" data-field="label">—</p>
+        <p class="eg-big" data-source="trip_days" data-where="id=drive_ev" data-field="days_txt">—</p>
+        <p class="eg-sub" data-source="trip_days" data-where="id=drive_ev" data-field="years_txt">—</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="eg-sec" id="eg-energy-chart" aria-labelledby="eg-h-energy">
+    <h2 id="eg-h-energy">Energy per task</h2>
+    <p class="eg-note">Each bar spans the low and high estimate. The scale is logarithmic, so every gridline is ten times the one before. Hover a bar for what it covers.</p>
+    <div class="eg-card"><div class="eg-chart dash-skeleton" id="eg-chart-energy" data-source="energy"></div></div>
+  </section>
+
+  <section class="eg-sec" id="eg-dist-chart" aria-labelledby="eg-h-dist">
+    <h2 id="eg-h-dist">Distance the same energy covers</h2>
+    <p class="eg-note">Bars span the low and high estimate for each task and mode. The scale is linear and capped at 10 miles, so the smallest bars are barely visible; their labels give the distances. The faint part of a bar runs from zero to the low estimate.</p>
+    <div class="eg-card"><div class="eg-chart dash-skeleton" id="eg-chart-dist" data-source="distances energy travel"></div></div>
+  </section>
+
+  <section class="eg-sec eg-details" id="eg-details" aria-labelledby="eg-h-details">
+    <h2 id="eg-h-details">Method, assumptions and sources</h2>
+
+    <h3 class="eg-note" style="font-weight:500;color:var(--color-fg)">Estimates behind each range</h3>
+    <div class="eg-tablewrap"><table data-source="energy" data-row-key="id">
+      <thead><tr><th data-field="task">Task</th><th data-field="range_txt">Range</th><th data-field="low_basis">Low end</th><th data-field="high_basis">High end</th></tr></thead><tbody></tbody>
+    </table></div>
+
+    <h3 class="eg-note" style="font-weight:500;color:var(--color-fg)">Energy per mile</h3>
+    <div class="eg-tablewrap"><table data-source="travel" data-row-key="id">
+      <thead><tr><th data-field="label">Mode</th><th data-field="rate_txt">Rate</th><th data-field="basis">Basis</th></tr></thead><tbody></tbody>
+    </table></div>
+
+    <h3 class="eg-note" style="font-weight:500;color:var(--color-fg)">Reference trip</h3>
+    <div class="eg-tablewrap"><table data-source="trip_days" data-row-key="id">
+      <thead><tr><th data-field="label">Trip</th><th data-field="miles_txt">Distance</th><th data-field="kwh_txt">Energy</th><th data-field="days_txt">Full Claude Code days</th><th data-field="years_txt">In years</th><th data-field="sessions_txt">Claude Code sessions</th></tr></thead><tbody></tbody>
+    </table></div>
+
+    <h3 class="eg-note" style="font-weight:500;color:var(--color-fg)">Notes and caveats</h3>
+    <div class="eg-tablewrap"><table data-source="notes" data-row-key="topic">
+      <thead><tr><th data-field="topic">Topic</th><th data-field="text">Detail</th></tr></thead><tbody></tbody>
+    </table></div>
+
+    <h3 class="eg-note" style="font-weight:500;color:var(--color-fg)">Sources</h3>
+    <div class="eg-tablewrap"><table data-source="sources" data-row-key="id">
+      <thead><tr><th data-field="title">Source</th><th data-field="used_for">Used for</th></tr></thead><tbody></tbody>
+    </table></div>
+  </section>
+</div>
+
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const __DATA={"energy": [{"id": "chat", "task": "One chat query", "detail": "Text prompt in a chatbot", "low_wh": 0.24, "high_wh": 0.34, "range_txt": "0.24–0.34 Wh", "low_basis": "Google's measured median Gemini text prompt", "high_basis": "OpenAI's stated average ChatGPT query"}, {"id": "reasoning", "task": "One long reasoning answer", "detail": "Extended thinking or very long output", "low_wh": 4, "high_wh": 40, "range_txt": "4–40 Wh", "low_basis": "Independent estimates for reasoning modes, low end", "high_basis": "Independent estimates for reasoning modes, high end"}, {"id": "session", "task": "One Claude Code session", "detail": "Median session of agentic coding", "low_wh": 41, "high_wh": 600, "range_txt": "41–600 Wh", "low_basis": "Couch: median session, about 590k tokens and 24 model calls", "high_basis": "Hausfather: median session of a heavy user with many subagents"}, {"id": "day", "task": "A full day in Claude Code", "detail": "A working day of agentic coding", "low_wh": 1300, "high_wh": 3000, "range_txt": "1.3–3.0 kWh", "low_basis": "Couch: median day", "high_basis": "Hausfather: average day (his range across days is 1.2 to 5.9 kWh)"}], "travel": [{"id": "gas", "label": "Gas car", "kwh_per_mile": 1.123, "rate_txt": "1.12 kWh per mile", "basis": "30 mpg, with 33.7 kWh of energy in a gallon of gasoline (EPA)"}, {"id": "ev", "label": "Electric car", "kwh_per_mile": 0.303, "rate_txt": "0.30 kWh per mile", "basis": "A mainstream EV at 3.3 miles per kWh; ratings run from 1.5 to 4.2 miles per kWh"}], "trips": [{"id": "drive_gas", "label": "5-hour drive, gas car", "short": "5-hour drive (300 mi)", "miles": 300, "mode": "gas"}, {"id": "drive_ev", "label": "5-hour drive, electric car", "short": "5-hour drive (300 mi)", "miles": 300, "mode": "ev"}], "notes": [{"topic": "What is measured", "text": "Chat and Claude Code figures are data-center electricity. Car figures are fuel or battery energy. The two are not directly comparable in carbon or primary-energy terms."}, {"topic": "Claude Code is estimated", "text": "Anthropic has not published per-token or per-prompt energy data for Claude. Both session estimates are built from token counts in real session logs and assumed energy per token. They differ because Hausfather's sessions are larger and use many subagents, and he describes himself as a heavy user."}, {"topic": "Chat figures", "text": "Google's 0.24 Wh is a median for text prompts and excludes training. OpenAI's 0.34 Wh is a stated average. A 2026 Microsoft Research analysis in Joule argues widely cited per-query figures are overstated 4 to 20 times for production deployments."}, {"topic": "Reasoning range", "text": "The 4 to 40 Wh range comes from independent estimates for reasoning or extended-thinking modes. It varies with model and answer length."}, {"topic": "Full-day range", "text": "Couch's median day is 1.3 kWh. Hausfather's average day is 3.0 kWh, with days ranging from 1.2 to 5.9 kWh. The page uses 1.3 to 3.0 kWh and leaves out the extreme days."}, {"topic": "Why agents cost more", "text": "An agent makes hundreds of model calls per session and re-reads a growing context each time. One profiling study found a sequential agent workload used 63 times more system energy per output token than saturated serving."}, {"topic": "How distances are worked out", "text": "Distance is task energy divided by the energy one mile takes in that mode. The low end uses the low energy estimate and the high end uses the high one. A 5-hour drive is taken as 300 miles at about 60 mph."}, {"topic": "Days of Claude Code", "text": "Days are trip energy divided by a full Claude Code day: the fewest days use 3.0 kWh per day and the most use 1.3 kWh per day."}], "sources": [{"id": "couch", "title": "Simon Couch, Electricity use of AI coding agents", "url": "https://simonpcouch.com/blog/2026-01-20-cc-impact/", "used_for": "Claude Code session and day, low estimate"}, {"id": "hausfather", "title": "Zeke Hausfather, The real energy use of agentic AI", "url": "https://www.theclimatebrink.com/p/the-real-energy-use-of-agentic-ai", "used_for": "Claude Code session and day, high estimate"}, {"id": "decoder", "title": "The Decoder, AI agents use roughly 600 times more energy than a simple chat prompt", "url": "https://the-decoder.com/ai-agents-use-roughly-600-times-more-energy-than-a-simple-chat-prompt/", "used_for": "Summary of Hausfather's measurements"}, {"id": "heise", "title": "heise, Why agents like Claude Code are real power guzzlers", "url": "https://www.heise.de/en/news/AI-as-a-climate-factor-Why-agents-like-Claude-Code-are-real-power-guzzlers-11455405.html", "used_for": "Typical session range of 0.2 to 1.2 kWh"}, {"id": "dcd", "title": "Data Center Dynamics, Google median Gemini prompt", "url": "https://www.datacenterdynamics.com/en/news/google-median-gemini-prompt-uses-024-watt-hours-of-power-and-consumes-026ml-of-water/", "used_for": "Chat query, low estimate (0.24 Wh)"}, {"id": "celsius", "title": "Projet Celsius, energy of a chat query", "url": "https://projetcelsius.com/en/blog/chatgpt-query-energy-consumption/", "used_for": "Chat query, high estimate (0.34 Wh from OpenAI)"}, {"id": "brainpool", "title": "Brainpool, LLM inference energy and footprint", "url": "https://brainpool.ai/blog/the-energy-and-greenhouse-gas-footprint-of-llm-inference-data-centers-frontier-models-scaling-and-the-road-to-2030", "used_for": "Reasoning-mode range"}, {"id": "msr", "title": "Microsoft Research, Energy Use of AI Inference", "url": "https://microsoft.com/en-us/research/publication/energy-use-of-ai-inference-efficiency-pathways-and-test-time-compute", "used_for": "Caveat on overstated per-query figures"}, {"id": "blackwell", "title": "Where Does the Energy Go? Profiling LLM Agent Inference on Blackwell GPUs", "url": "https://neurips.cc/virtual/2026/170717", "used_for": "Agent workloads use far more energy per token"}, {"id": "usafacts", "title": "USAFacts, electricity to power all cars", "url": "https://usafacts.org/articles/how-much-electricity-would-it-take-to-power-all-cars-if-they-were-electric", "used_for": "33.7 kWh per gallon of gasoline (EPA)"}, {"id": "recharged", "title": "Recharged, car energy explained", "url": "https://recharged.com/articles/car-energy-explained-gas-vs-electric", "used_for": "Typical EV efficiency"}]};
+const __calcs={};
+window.dash={
+  colors:['var(--c1)','var(--c2)'],
+  calc(id,spec){__calcs[id]=spec;},
+  data(id){
+    if(__calcs[id]){const s=__calcs[id];return {status:'ok',data:s.fn(...s.inputs.map(i=>dash.data(i).data))};}
+    if(__DATA[id])return {status:'ok',data:__DATA[id]};
+    return {status:'missing',data:[]};
+  },
+  onData(fn){fn();let w=innerWidth;addEventListener('resize',()=>{if(innerWidth!==w){w=innerWidth;fn();}});}
+};
+</script>
+<script>
+dash.calc('distances', {
+  title: 'Distance for the same energy',
+  description: 'Each task’s energy divided by the energy one mile takes in each mode.',
+  inputs: ['energy', 'travel'],
+  fn: (energy, travel) => {
+    const sig = (x) => Number(x.toPrecision(2));
+    const fmt = (mi) => {
+      const ft = mi * 5280;
+      if (ft < 1000) return (ft < 10 ? ft.toFixed(1) : sig(ft).toLocaleString('en-US')) + ' ft';
+      return (mi < 10 ? String(sig(mi)) : sig(mi).toLocaleString('en-US')) + ' mi';
+    };
+    const out = [];
+    for (const e of energy) {
+      for (const t of travel) {
+        const lo = e.low_wh / 1000 / t.kwh_per_mile;
+        const hi = e.high_wh / 1000 / t.kwh_per_mile;
+        out.push({ task_id: e.id, task: e.task, mode_id: t.id, mode: t.label, low_mi: lo, high_mi: hi, range_txt: fmt(lo) + ' – ' + fmt(hi) });
+      }
+    }
+    return out;
+  }
+});
+
+dash.calc('trip_days', {
+  title: 'Trips in Claude Code days',
+  description: 'Trip energy divided by one full Claude Code day and one session, using the high and low estimates.',
+  inputs: ['energy', 'travel', 'trips'],
+  fn: (energy, travel, trips) => {
+    const sig = (x) => Number(x.toPrecision(2));
+    const n = (x) => sig(x).toLocaleString('en-US');
+    const day = energy.find((e) => e.id === 'day');
+    const session = energy.find((e) => e.id === 'session');
+    return trips.map((tr) => {
+      const t = travel.find((x) => x.id === tr.mode);
+      const kwh = tr.miles * t.kwh_per_mile;
+      const dLo = kwh * 1000 / day.high_wh;
+      const dHi = kwh * 1000 / day.low_wh;
+      return {
+        id: tr.id,
+        label: tr.label,
+        miles_txt: tr.miles.toLocaleString('en-US') + ' mi',
+        kwh_txt: n(kwh) + ' kWh',
+        days_txt: n(dLo) + ' – ' + n(dHi) + ' days',
+        years_txt: dLo >= 365 ? (dLo / 365).toPrecision(2) + ' – ' + (dHi / 365).toPrecision(2) + ' years of daily use' : 'Under a year of daily use',
+        sessions_txt: n(kwh * 1000 / session.high_wh) + ' – ' + n(kwh * 1000 / session.low_wh)
+      };
+    });
+  }
+});
+
+const NEEDED = ['energy', 'travel', 'trips', 'notes', 'sources', 'distances', 'trip_days'];
+
+function fillMarks() {
+  document.querySelectorAll('.eg [data-where][data-field]').forEach((el) => {
+    const d = dash.data(el.getAttribute('data-source'));
+    if (d.status !== 'ok') return;
+    const q = new URLSearchParams(el.getAttribute('data-where'));
+    const row = d.data.find((r) => Array.from(q.entries()).every(([k, v]) => String(r[k]) === v));
+    if (row) el.textContent = String(row[el.getAttribute('data-field')]);
+  });
+}
+
+function fillTables() {
+  document.querySelectorAll('.eg table[data-row-key]').forEach((tbl) => {
+    const d = dash.data(tbl.getAttribute('data-source'));
+    const keyCol = tbl.getAttribute('data-row-key');
+    const body = tbl.tBodies[0];
+    body.textContent = '';
+    if (d.status !== 'ok') return;
+    const fields = Array.from(tbl.querySelectorAll('th[data-field]')).map((th) => th.getAttribute('data-field'));
+    d.data.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-key', String(r[keyCol]));
+      fields.forEach((f) => {
+        const td = document.createElement('td');
+        const v = r[f];
+        if (f === 'title' && typeof r.url === 'string' && /^https:\/\//.test(r.url)) {
+          const a = document.createElement('a');
+          a.href = r.url; a.target = '_blank'; a.rel = 'noopener';
+          a.textContent = String(v);
+          td.appendChild(a);
+        } else {
+          td.textContent = v == null ? '' : String(v);
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+  });
+}
+
+function makeTip(host) {
+  const t = document.createElement('div');
+  t.className = 'eg-tip'; t.hidden = true;
+  const a = document.createElement('div'); a.className = 'eg-tip-a';
+  const b = document.createElement('div'); b.className = 'eg-tip-b';
+  t.append(a, b);
+  host.appendChild(t);
+  return {
+    show(ev, l1, l2) {
+      a.textContent = l1; b.textContent = l2; t.hidden = false;
+      const r = host.getBoundingClientRect();
+      const w = t.offsetWidth;
+      let x = ev.clientX - r.left + 12;
+      if (x + w > r.width) x = Math.max(0, ev.clientX - r.left - w - 12);
+      t.style.left = x + 'px';
+      t.style.top = (ev.clientY - r.top + 14) + 'px';
+    },
+    hide() { t.hidden = true; }
+  };
+}
+
+function drawEnergy(el) {
+  const rows = dash.data('energy').data;
+  el.textContent = '';
+  el.classList.remove('dash-skeleton', 'eg-failed');
+  const W = Math.max(280, el.clientWidth);
+  const m = { t: 6, r: 14, b: 30, l: 6 };
+  const rowH = 52;
+  const H = m.t + rows.length * rowH + m.b;
+  const x = d3.scaleLog().domain([0.1, 10000]).range([m.l, W - m.r]);
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', '0 0 ' + W + ' ' + H)
+    .attr('role', 'img').attr('aria-label', 'Energy range for each task on a logarithmic scale');
+  const all = [[0.1, '0.1 Wh'], [1, '1 Wh'], [10, '10 Wh'], [100, '100 Wh'], [1000, '1 kWh'], [10000, '10 kWh']];
+  const ticks = W < 440 ? all.filter((_, i) => i % 2 === 1) : all;
+  const yAxis = H - m.b;
+  svg.append('g').selectAll('line').data(ticks).join('line')
+    .attr('x1', (d) => x(d[0])).attr('x2', (d) => x(d[0])).attr('y1', m.t).attr('y2', yAxis)
+    .style('stroke', 'var(--cds-chart-grid)').attr('stroke-width', 1);
+  svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yAxis).attr('y2', yAxis)
+    .style('stroke', 'var(--cds-chart-axis)').attr('stroke-width', 1);
+  svg.append('g').selectAll('text').data(ticks).join('text').attr('class', 'eg-muted')
+    .attr('x', (d) => x(d[0])).attr('y', yAxis + 18)
+    .attr('text-anchor', (d, i) => (i === 0 && d[0] === 0.1) ? 'start' : (d[0] === 10000 ? 'end' : 'middle'))
+    .text((d) => d[1]);
+  const tip = makeTip(el);
+  rows.forEach((r, i) => {
+    const y0 = m.t + i * rowH;
+    const g = svg.append('g');
+    const label = g.append('text').attr('class', 'eg-halo').attr('x', m.l).attr('y', y0 + 15);
+    label.append('tspan').attr('class', 'eg-strong').text(r.task);
+    label.append('tspan').attr('class', 'eg-muted').attr('dx', 8).text(r.range_txt);
+    const w = Math.max(5, x(r.high_wh) - x(r.low_wh));
+    const strong = r.id === 'session' || r.id === 'day';
+    g.append('rect').attr('x', x(r.low_wh)).attr('y', y0 + 24).attr('width', w).attr('height', 13).attr('rx', 6.5)
+      .attr('style', strong ? 'fill:' + dash.colors[0] : 'fill:var(--cds-chart-muted)');
+    g.append('rect').attr('x', 0).attr('y', y0).attr('width', W).attr('height', rowH).style('fill', 'transparent')
+      .on('pointermove', (ev) => tip.show(ev, r.task, r.range_txt + ' · ' + r.detail))
+      .on('pointerleave', () => tip.hide());
+  });
+}
+
+function drawDist(el) {
+  const dist = dash.data('distances').data;
+  const energy = dash.data('energy').data;
+  const travel = dash.data('travel').data;
+  el.textContent = '';
+  el.classList.remove('dash-skeleton', 'eg-failed');
+  const leg = document.createElement('div');
+  leg.className = 'eg-legend';
+  travel.forEach((t, i) => {
+    const s = document.createElement('span'); s.className = 'eg-key';
+    const sw = document.createElement('i'); sw.style.background = dash.colors[i % dash.colors.length];
+    s.append(sw, document.createTextNode(t.label));
+    leg.appendChild(s);
+  });
+  el.appendChild(leg);
+  const W = Math.max(280, el.clientWidth);
+  const CAP = 10;
+  const barH = 11, barGap = 6, titleH = 20;
+  const groupH = titleH + travel.length * (barH + barGap) + 14;
+  const m = { t: 8, r: 14, b: 34, l: 6 };
+  const H = m.t + energy.length * groupH + m.b;
+  const x = d3.scaleLinear().domain([0, CAP]).range([m.l, W - m.r]);
+  const ticks = [0, 2, 4, 6, 8, 10];
+  const yAxis = H - m.b;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', '0 0 ' + W + ' ' + H)
+    .attr('role', 'img').attr('aria-label', 'Distance covered by the energy of each task, by mode, on a linear scale capped at 10 miles');
+  svg.append('g').selectAll('line').data(ticks).join('line')
+    .attr('x1', (d) => x(d)).attr('x2', (d) => x(d)).attr('y1', m.t).attr('y2', yAxis)
+    .style('stroke', 'var(--cds-chart-grid)').attr('stroke-width', 1);
+  svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yAxis).attr('y2', yAxis)
+    .style('stroke', 'var(--cds-chart-axis)').attr('stroke-width', 1);
+  svg.append('g').selectAll('text').data(ticks).join('text').attr('class', 'eg-muted')
+    .attr('x', (d) => x(d)).attr('y', yAxis + 18)
+    .attr('text-anchor', (d, i) => i === 0 ? 'start' : (i === ticks.length - 1 ? 'end' : 'middle'))
+    .text((d) => d + ' mi');
+  const tip = makeTip(el);
+  energy.forEach((e, gi) => {
+    const gy = m.t + gi * groupH;
+    svg.append('text').attr('class', 'eg-strong eg-halo').attr('x', m.l).attr('y', gy + 13).text(e.task);
+    travel.forEach((t, ti) => {
+      const row = dist.find((d) => d.task_id === e.id && d.mode_id === t.id);
+      if (!row) return;
+      const by = gy + titleH + ti * (barH + barGap);
+      const color = dash.colors[ti % dash.colors.length];
+      const xLo = x(Math.min(row.low_mi, CAP)), xHi = x(Math.min(row.high_mi, CAP));
+      svg.append('rect').attr('x', x(0)).attr('y', by).attr('width', Math.max(0, xLo - x(0))).attr('height', barH)
+        .attr('style', 'fill:' + color + ';opacity:.3');
+      const w = Math.max(3, xHi - xLo);
+      svg.append('rect').attr('x', xLo).attr('y', by).attr('width', w).attr('height', barH).attr('rx', 2)
+        .attr('style', 'fill:' + color);
+      const lab = svg.append('text').attr('class', 'eg-muted eg-halo').attr('y', by + 9).text(row.range_txt);
+      if (W - m.r - (xLo + w + 6) > 110) lab.attr('x', xLo + w + 6);
+      else lab.attr('x', xLo - 6).attr('text-anchor', 'end');
+      svg.append('rect').attr('x', 0).attr('y', by - barGap / 2).attr('width', W).attr('height', barH + barGap).style('fill', 'transparent')
+        .on('pointermove', (ev) => tip.show(ev, e.task + ' \u00b7 ' + t.label, row.range_txt))
+        .on('pointerleave', () => tip.hide());
+    });
+  });
+}
+
+dash.onData(() => {
+  fillMarks();
+  fillTables();
+  const e1 = document.getElementById('eg-chart-energy');
+  const e2 = document.getElementById('eg-chart-dist');
+  if (!e1 || !e2) return;
+  const states = NEEDED.map((id) => dash.data(id).status);
+  if (states.every((s) => s === 'ok')) {
+    drawEnergy(e1);
+    drawDist(e2);
+    return;
+  }
+  const failed = states.some((s) => ['error', 'connect', 'declined', 'missing'].includes(s));
+  [e1, e2].forEach((e) => {
+    e.textContent = '';
+    if (failed) { e.classList.remove('dash-skeleton'); e.classList.add('eg-failed'); e.textContent = 'Failed to load'; }
+    else { e.classList.add('dash-skeleton'); e.classList.remove('eg-failed'); }
+  });
+});
+</script>
+</body>
+</html>
